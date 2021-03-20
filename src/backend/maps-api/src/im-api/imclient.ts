@@ -6,6 +6,9 @@ import { RequestData } from "../common/https/requestdata";
 import { ResponseData } from "../common/https/responsedata";
 import { HttpsException } from "../common/exceptions/httpsexception";
 
+// Storage operations could be abstracted away in some kind of StorageController,
+// but since there is not much logic need for it, I decided to place it here.
+
 export class IMClient
 {
 	private readonly IMAPI: string = "https://www.insidemaps.com/api/v2";
@@ -97,6 +100,7 @@ export class IMClient
 
 	public req(path: string, method: string = "GET"): Promise<ResponseData>
 	{
+		// This is just a shortcut method for common cases
 		return this.request(new RequestData(path, method));
 	}
 }

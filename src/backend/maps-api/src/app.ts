@@ -7,10 +7,13 @@ import { router as apiRouter } from "./routes/api";
 
 export const app = express();
 
-app.use(logger('dev'));
+const reactApp = express.static(path.join(__dirname, "../../../frontend/maps-ui/build"));
+
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
+app.use(reactApp);
 
-app.use('/api', apiRouter);
+app.use("/api", apiRouter);
+app.use("/*", reactApp);
