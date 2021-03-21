@@ -54,7 +54,7 @@ router.get("/projects/:organizationId/:startDate/:endDate", async(req, res, next
 	let json = JSON.parse(response.Body);
 	
 	let projects: Project[] = [];
-	
+
 	let requests: Promise<ResponseData>[] = [];
 	let counter = 0;
 
@@ -65,12 +65,22 @@ router.get("/projects/:organizationId/:startDate/:endDate", async(req, res, next
 
 		// Limit the number of projects a user can fetch at one point.
 		// Ideally, some sort of pagination should be made here.
-		if (++counter == 150) break;
+		if (++counter >= 150) break;
 	}
 
 	for (let request of requests)
 	{
-		response = await request;
+		try
+		{
+			response = await request;
+		}
+		catch
+		{
+			// Error handling in general should be done in a better way.
+			// This is just a quick way for demo/prototyping.
+			continue;
+		}
+
 		json = JSON.parse(response.Body);
 
 		projects.push

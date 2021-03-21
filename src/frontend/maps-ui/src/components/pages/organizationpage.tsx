@@ -2,35 +2,39 @@ import * as React from "react";
 
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import TextField from '@material-ui/core/TextField';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import TextField from "@material-ui/core/TextField";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Organization from "../../models/organization";
 import Project from "../../models/project";
 import App from "../../App";
 
 export interface OrganizationPageProps { }
-export interface OrganizationPageState { projects: Project[], startDate: string, endDate: string, loading: boolean }
+export interface OrganizationPageState { projects: Project[], loading: boolean }
 
 export default class OrganizationPage extends React.Component<OrganizationPageProps, OrganizationPageState>
 {
+	private startDate: HTMLDivElement | null = null;
+	private endDate: HTMLDivElement | null = null;
+
 	state: OrganizationPageState =
 	{
 		projects: [],
-		startDate: new Date(new Date().getTime() - 48 * 60 * 60 * 1000).toISOString().replace("Z", ""),
-		endDate: new Date().toISOString().replace("Z", ""),
 		loading: false
 	};
 
 	searchProjects = (organizationId: string) =>
 	{
-		let target = "api/projects/" + organizationId + "/" + this.state.startDate + "Z/" + this.state.endDate + "Z";
+		let startDate = this.startDate?.querySelector("input")?.value;
+		let endDate = this.endDate?.querySelector("input")?.value;
 
+		let target = "api/projects/" + organizationId + "/" + startDate + "Z/" + endDate + "Z";
+		
 		this.setState({ projects: [], loading: true });
 
 		fetch(target).then(response =>
@@ -64,11 +68,13 @@ export default class OrganizationPage extends React.Component<OrganizationPagePr
 				<Box color="text.primary">
 					<h4>{organization.Name}</h4>
 				</Box>
+
 				<TextField
+					ref={e => this.startDate = e}
 					id="datetime-local"
 					label="Start date"
 					type="datetime-local"
-					value={this.state.startDate}
+					defaultValue={new Date(new Date().getTime() - 48 * 60 * 60 * 1000).toISOString().replace("Z", "")}
 					style={{ marginTop: 10 }}
 					InputLabelProps=
 					{{
@@ -79,10 +85,11 @@ export default class OrganizationPage extends React.Component<OrganizationPagePr
 				<br/>
 				
 				<TextField
+					ref={e => this.endDate = e}
 					id="datetime-local"
 					label="End date"
 					type="datetime-local"
-					value={this.state.endDate}
+					defaultValue={new Date().toISOString().replace("Z", "")}
 					style={{ marginTop: 10 }}
 					InputLabelProps=
 					{{
