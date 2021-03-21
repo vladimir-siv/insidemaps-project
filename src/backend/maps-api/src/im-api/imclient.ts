@@ -75,7 +75,7 @@ export class IMClient
 			}
 			catch
 			{
-				this.getNewToken();
+				await this.getNewToken();
 			}
 		}
 
@@ -86,7 +86,7 @@ export class IMClient
 		
 		if (response.Meta.statusCode == 401)
 		{
-			this.getNewToken();
+			await this.getNewToken();
 			response = await this.Client.request(reqData);
 		}
 
