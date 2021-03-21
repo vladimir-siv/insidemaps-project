@@ -1,0 +1,22 @@
+Approach A (automatic approach):
+1. Run sync.bat -> enough to do just once, this file syncs node modules
+2. Run start.bat -> this builds & starts the app on localhost:3000
+
+Approach B (manual approach if automatic doesn't work):
+1. Go to src\backend\maps-api & run "npm install"
+2. Go to src\frontend\maps-ui & run "npm install"
+	-Note: you only need to do steps 1 & 2 once; sync.bat does exactly this
+3. Go to src\frontend\maps-ui & run "npm run-script build"
+	-Note: you can also do this only once, unless you change source code of frontend app
+4. Go to src\backend\maps-api & run "npm start"
+	-Note: this starts the server on localhost:3000
+
+Approach C:
+1. Call me to check what's wrong
+	-Note: I've tested approach A & B on new cloned projects, they should work.
+
+Usage:
+- Backend & frontend apps are connected. This means that frontend app can be accessed through backend.
+- If you open your browser and go to localhost:3000, frontend app will be sent.
+- Backend api base url is localhost:3000/api/ (this is where the frontend app sends requests).
+- You can check routes.ts file for more information.
