@@ -1,2 +1,2 @@
-cd %~dp0
-npm start
+cd "%~dp0"
+call npm start

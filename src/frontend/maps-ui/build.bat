@@ -1,2 +1,2 @@
-cd %~dp0
-npm run-script build
+cd "%~dp0"
+call npm run-script build
