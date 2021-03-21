@@ -97,6 +97,7 @@ export default class OrganizationPage extends React.Component<OrganizationPagePr
 					color="primary"
 					style={{ marginTop: 10 }}
 					onClick={ () => this.searchProjects(organization.Id) }
+					disabled={this.state.loading}
 				>
 					Find Projects
 				</Button>
