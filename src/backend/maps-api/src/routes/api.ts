@@ -54,7 +54,7 @@ router.get("/projects/:organizationId/:startDate/:endDate", async(req, res, next
 	let json = JSON.parse(response.Body);
 	
 	let projects: Project[] = [];
-
+	
 	let requests: Promise<ResponseData>[] = [];
 	let counter = 0;
 

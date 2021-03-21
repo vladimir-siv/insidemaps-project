@@ -8,13 +8,14 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Organization from "../../models/organization";
 import Project from "../../models/project";
 import App from "../../App";
 
 export interface OrganizationPageProps { }
-export interface OrganizationPageState { projects: Project[], startDate: string, endDate: string }
+export interface OrganizationPageState { projects: Project[], startDate: string, endDate: string, loading: boolean }
 
 export default class OrganizationPage extends React.Component<OrganizationPageProps, OrganizationPageState>
 {
@@ -22,18 +23,21 @@ export default class OrganizationPage extends React.Component<OrganizationPagePr
 	{
 		projects: [],
 		startDate: new Date(new Date().getTime() - 48 * 60 * 60 * 1000).toISOString().replace("Z", ""),
-		endDate: new Date().toISOString().replace("Z", "")
+		endDate: new Date().toISOString().replace("Z", ""),
+		loading: false
 	};
 
 	searchProjects = (organizationId: string) =>
 	{
 		let target = "api/projects/" + organizationId + "/" + this.state.startDate + "Z/" + this.state.endDate + "Z";
 
+		this.setState({ projects: [], loading: true });
+
 		fetch(target).then(response =>
 		{
 			response.text().then(data =>
 			{
-				this.setState({ projects: JSON.parse(data).projects });
+				this.setState({ projects: JSON.parse(data).projects, loading: false });
 			});
 		});
 	}
@@ -52,6 +56,8 @@ export default class OrganizationPage extends React.Component<OrganizationPagePr
 			>
 				•
 			</span>;
+		
+		const loader = this.state.loading ? <CircularProgress style={{ marginTop: 20 }} /> : <div />;
 
 		return (
 			<React.Fragment>
@@ -94,6 +100,10 @@ export default class OrganizationPage extends React.Component<OrganizationPagePr
 				>
 					Find Projects
 				</Button>
+
+				<br />
+
+				{ loader }
 				
 				<Container maxWidth="sm">
 				{
