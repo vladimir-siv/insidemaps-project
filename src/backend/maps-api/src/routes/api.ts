@@ -2,6 +2,7 @@ import express from "express";
 import { Context } from "../dependency/context";
 import { Organization } from "../models/organization";
 import { Project } from "../models/project";
+import { ResponseData } from "../common/https/responsedata";
 
 export const router = express.Router();
 
@@ -14,9 +15,17 @@ router.get("/organizations", async (req, res, next) =>
 	
 	let organizations: Organization[] = [];
 
+	let requests: Promise<ResponseData>[] = [];
+
 	for (let id of json.data)
 	{
-		response = await client.req("/organizations/" + id);
+		let request = client.req("/organizations/" + id);
+		requests.push(request);
+	}
+
+	for (let request of requests)
+	{
+		response = await request;
 		json = JSON.parse(response.Body);
 
 		organizations.push
@@ -33,22 +42,35 @@ router.get("/organizations", async (req, res, next) =>
 	res.json({ organizations });
 });
 
-router.get("/projects/:organizationId", async(req, res, next) =>
+router.get("/projects/:organizationId/:startDate/:endDate", async(req, res, next) =>
 {
 	let client = Context.ResolveClient();
 
 	let id = req.params.organizationId;
-
-	console.log("fetching projects . . .");
-	let response = await client.req("/organizations/" + id + "/projects?updatedSince=2021-03-19T00:00:00Z&status=all");
+	let updatedSince = req.params.startDate;
+	let updatedTo = req.params.endDate;
+	
+	let response = await client.req("/organizations/" + id + "/projects?updatedSince=" + updatedSince + "&updatedTo=" + updatedTo + "&status=all");
 	let json = JSON.parse(response.Body);
-	console.log("fetched " + json.data.length + " projects!");
-
+	
 	let projects: Project[] = [];
+
+	let requests: Promise<ResponseData>[] = [];
+	let counter = 0;
 
 	for (let id of json.data)
 	{
-		response = await client.req("/projects/" + id);
+		let request = client.req("/projects/" + id);
+		requests.push(request);
+
+		// Limit the number of projects a user can fetch at one point.
+		// Ideally, some sort of pagination should be made here.
+		if (++counter == 150) break;
+	}
+
+	for (let request of requests)
+	{
+		response = await request;
 		json = JSON.parse(response.Body);
 
 		projects.push

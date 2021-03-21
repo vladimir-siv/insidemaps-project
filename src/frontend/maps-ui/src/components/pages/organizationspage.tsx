@@ -12,19 +12,26 @@ import Path from "../../system/path";
 import App from "../../App";
 
 export interface OrganizationsPageProps { }
-export interface OrganizationsPageState { }
+export interface OrganizationsPageState { organizations: Organization[] }
 
 export default class OrganizationsPage extends React.Component<OrganizationsPageProps, OrganizationsPageState>
 {
-	organizations: Organization[] = [];
+	state: OrganizationsPageState =
+	{
+		organizations: []
+	};
 	
 	constructor(props: OrganizationsPageProps)
 	{
 		super(props);
 		
-		const response = JSON.parse('{"organizations":[{"Id":"IMXmiLCBks","Name":"danicatest","CreatedAt":"2017-06-19T11:25:26.731Z"},{"Id":"9I2G5Floqi","Name":"niksaOrganizacija","CreatedAt":"2017-09-25T14:37:16.965Z"},{"Id":"yvOGXBTZB2","Name":"testBuda","CreatedAt":"2020-07-28T16:19:16.801Z"},{"Id":"p7sdXqUHvo","Name":"danicaOrganizacija","CreatedAt":"2017-05-31T10:42:15.598Z"}]}');
-
-		this.organizations = response.organizations;
+		fetch("api/organizations").then(response =>
+		{
+			response.text().then(data =>
+			{
+				this.setState({ organizations: JSON.parse(data).organizations });
+			});
+		});
 	}
 
 	navigateToOrganization = (organization: Organization) =>
@@ -43,7 +50,7 @@ export default class OrganizationsPage extends React.Component<OrganizationsPage
 			<Container maxWidth="xs">
 				<List>
 				{
-					this.organizations.map
+					this.state.organizations.map
 					(
 						organization =>
 						(
